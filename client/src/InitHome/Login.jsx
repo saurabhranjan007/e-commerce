@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, Redirect } from 'react-router-dom';
 
@@ -11,7 +11,6 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;  
-    ${'' /* margin-top: 15px;   */}
     background-size: cover;
     overflow: hidden;
 `;
@@ -57,42 +56,63 @@ const LinkCustom = styled.a`
     text-decoration: underline;
 `;
 
-
 const Login = ({ loggedIn, setLoggedIn }) => {
+    const [userName, setUserName] = useState('');
+    const [password, setPassword] = useState('');
 
-    const [login, setLogin] = useState(false)
+    console.log(`loggedin var before login: ${loggedIn}`);
 
-    // const navigate = useNavigate();
-    const handleSubmit = async() => {
-        setLogin(true)
-        setLoggedIn(true)
-        // navigate("/");
-    }
-  
-    return (
-        <div>
-            {
-                login === false ? 
-                    (
-                        <Container>
-                            <Wrapper>
-                                <Title>LOG IN</Title>
-                                <Form>
-                                    <Input placeholder="Username" />
-                                    <Input placeholder="Password" />
-                                    <Button>
-                                        <Link onClick={() => {handleSubmit()}}>LOGIN</Link>
-                                    </Button>
-                                    <LinkCustom>
-                                        <Link to='/signup'>CREATE A NEW ACCOUNT</Link>
-                                    </LinkCustom>
-                                </Form>
-                            </Wrapper>
-                        </Container>
-                    ) : <Redirect to='/' />
-            }
-        </div>
-  )
-}
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('http://localhost:3000/user/signin', {
+                method: 'POST',
+                body: JSON.stringify({
+                    userName: userName,
+                    password: password
+                }),
+                credentials: 'include',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Credentials': true,
+                },
+            });
+            const data = await response.json();
+            console.log(`res data from login: ${data}`);
+            setLoggedIn(true);
+        } catch (error) {
+            console.error(`error in login: ${error}`);
+        }
+    };
 
-export default Login
+    console.log(`login var after login: ${loggedIn}`);
+
+    return loggedIn ? (
+        <Redirect to="/" />
+    ) : (
+        <Container>
+            <Wrapper>
+                <Title>LOG IN</Title>
+                <Form>
+                    <Input
+                        placeholder="Username"
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                    />
+                    <Input
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <Button onClick={handleSubmit}>LOGIN</Button>
+                    <LinkCustom>
+                        <Link to="/signup">CREATE A NEW ACCOUNT</Link>
+                    </LinkCustom>
+                </Form>
+            </Wrapper>
+        </Container>
+    );
+};
+
+export default Login;

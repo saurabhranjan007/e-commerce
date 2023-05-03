@@ -70,7 +70,8 @@ function App() {
     }
   };
 
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+  console.log(`state of loggedIn: ${loggedIn}`);
 
   return (
     <Router>
@@ -78,13 +79,13 @@ function App() {
         <Route path="/login" exact>
           <>
             <Head />
-            <Login setLoggedIn={setLoggedIn} />
+            <Login loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
           </>
         </Route>
         <Route path="/signup" exact>
           <>
             <Head />
-            <Register setLoggedIn={setLoggedIn} />
+            <Register loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
           </>
         </Route>
         <Route path="/" exact>
@@ -94,12 +95,12 @@ function App() {
             <Redirect to="/login" />
           )}
         </Route>
-        <Route path="/profile" exact>
+        <Route path="/logout" exact>
           {loggedIn ? 
             (
               <>
                 <Header CartItem={CartItem} />
-                <Profile />
+                <Profile loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
               </>
             ) : <Redirect to="/login" />}
         </Route>

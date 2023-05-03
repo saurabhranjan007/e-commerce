@@ -18,7 +18,7 @@ const MainNav = ({ CartItem }) => {
             </Link>
           </div>
           <div className='icon f_flex width'>
-            <Link to="/profile">
+            <Link to="/logout">
               <i className='fa fa-user icon-circle'></i>
             </Link>
             <div className='cart'>

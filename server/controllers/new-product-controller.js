@@ -39,7 +39,7 @@ const getAllProducts = async(req, res) => {
         console.log(`getting all the products from productSchema`);
 
         const get_product = await newProduct.find().exec()
-        console.log(`all product data ${get_product}`);
+        console.log(`all new product data ${get_product.length}`);
 
         return res.status(200).json({
             message: "All new product data",

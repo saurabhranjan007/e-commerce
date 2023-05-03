@@ -41,7 +41,7 @@ const getAllProducts = async(req, res) => {
         console.log(`getting all the products from productSchema`);
 
         const getAll = await flashProduct.find().exec()
-        console.log(`all product data ${getAll}`);
+        console.log(`all flash product data ${getAll.length}`);
 
         return res.status(200).json({
             message: "All flash product data",

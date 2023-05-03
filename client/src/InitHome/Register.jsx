@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 const Container = styled.div`
     width: 100%;
@@ -52,42 +52,100 @@ const Button = styled.button`
     cursor: pointer;
 `;
 
-const LinkCustom = styled.a`
+const LinkCustom = styled.div`
     margin: 5px 0px;
     cursor: pointer;
     font-size: 12px;
-    // background: #90EE90; 
-    opacity: 70%;
     text-decoration: underline;
-    font-weight: bold;
-    padding-top: 10px; 
+    margin-top: 15px;
 `;
 
 
 const Register = ({ loggedIn, setLoggedIn }) => {
-  return (
-    <div>
+
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [email, setEmail] = useState("")
+    const [username, setUserName] = useState("")
+    const [password, setPassword] = useState("")
+    const [isSuccess, setIsSuccess] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const signup = await fetch("http://localhost:3000/user/signup", {
+            method: "POST",
+            body: JSON.stringify({
+                fullName: `${firstName} ${lastName}`,
+                userName: username,
+                email: email,
+                password: password,
+            }),
+            credentials: "include",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Credentials": true,
+            },
+            });
+        
+            const res_data = await signup.json();
+            console.log("res_data", res_data);
+            setLoggedIn(true);
+            setIsSuccess(true);
+        } catch (error) {
+            console.error(`error in Register: ${error}`);
+        }
+    };
+
+    if (isSuccess) {
+        return <Redirect to="/" />;
+    }
+
+    return loggedIn ? (
+            <Redirect to="/" />
+        ) 
+    : 
+    (
         <Container>
             <Wrapper>
                 <Title>CREATE AN ACCOUNT</Title>
                 <Form>
-                    <Input placeholder="First Name"/>
-                    <Input placeholder="Last Name"/>
-                    <Input placeholder="Your Email" />
-                    <Input placeholder="Username" />
-                    <Input placeholder="Password" />
-                    <Input placeholder="Confirm Password" />
-
-                    <LinkCustom>
-                        <Link to='/'>Have an Account? LOGIN!</Link>
-                    </LinkCustom>
+                    <Input 
+                        placeholder="First Name" 
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)} 
+                    />
+                    <Input 
+                        placeholder="Last Name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                    />
+                    <Input 
+                        placeholder="Your Email" 
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <Input 
+                        placeholder="Username" 
+                        value={username}
+                        onChange={(e) => setUserName(e.target.value)}
+                    />
+                    <Input 
+                        placeholder="Password" 
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <Input  />
                     <Agreement>By creating an account. I agree to the processing of my personal data in accordance with the PRIVACY POLICY!</Agreement>
-                    <Button onClick={() => setLoggedIn(true)}>CREATE</Button>
+                    <Button onClick={() => handleSubmit()}>CREATE</Button>
                 </Form>
+                <LinkCustom>
+                    <Link to='/login'>HAVE AN ACCOUNT? LOGIN</Link>
+                </LinkCustom>
             </Wrapper>
         </Container>
-    </div>
-  )
+    )
 }
 
 export default Register
